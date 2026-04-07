@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-auto-skeleton": ["./src/index"]
+      "react-native-auto-shimmer": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

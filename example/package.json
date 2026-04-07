@@ -1,5 +1,5 @@
 {
-  "name": "react-native-auto-skeleton-example",
+  "name": "react-native-auto-shimmer-example",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -7,12 +7,14 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "build:ios": "xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/AutoSkeletonExample.xcworkspace -UseNewBuildSystem=YES -scheme AutoSkeletonExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
+    "generate": "node ../cli/generate.js --out src/skeletons",
+    "build:ios": "xcodebuild ONLY_ACTIVE_ARCH=YES -workspace ios/AutoShimmerExample.xcworkspace -UseNewBuildSystem=YES -scheme AutoShimmerExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build -quiet",
     "build:android": "cd android && ./gradlew assembleDebug -DtestBuildType=debug -Dorg.gradle.jvmargs=-Xmx4g",
     "build:web": "expo export --platform web"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
+    "@rozenite/plugin-bridge": "^1.6.0",
     "expo": "~54.0.33",
     "expo-status-bar": "~3.0.9",
     "react": "19.1.0",
@@ -22,7 +24,10 @@
   },
   "private": true,
   "devDependencies": {
+    "@react-native-auto-shimmer/rozenite-plugin": "*",
+    "@rozenite/metro": "^1.6.0",
     "react-native-builder-bob": "^0.41.0",
-    "react-native-monorepo-config": "^0.3.3"
+    "react-native-monorepo-config": "^0.3.3",
+    "tsx": "^4.21.0"
   }
 }
