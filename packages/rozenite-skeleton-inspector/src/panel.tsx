@@ -42,6 +42,9 @@ export default function SkeletonInspectorPanel() {
   const [outDir, setOutDir] = useState('src/skeletons');
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'ok' | 'error'>('idle');
   const [saveMsg, setSaveMsg] = useState('');
+  const [saveSnippet, setSaveSnippet] = useState<{ varName: string; importPath: string; filePath: string; isDescriptor: boolean } | null>(null);
+  const [descState, setDescState] = useState<'idle' | 'saving' | 'ok' | 'error'>('idle');
+  const [descMsg, setDescMsg] = useState('');
 
   useEffect(() => {
     if (!client) return;
@@ -61,36 +64,75 @@ export default function SkeletonInspectorPanel() {
 
     const s3 = client.onMessage('save-result', (data) => {
       setSaveState(data.ok ? 'ok' : 'error');
-      setSaveMsg(
-        data.ok
-          ? `✓  Saved → ${data.file}  (${data.skeletons} skeletons)`
-          : `Error: ${data.error}`
-      );
+      if (data.ok && data.file && selected) {
+        setSaveMsg(`✓  Saved  (${data.skeletons} skeletons)`);
+        const varName = selected.replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase()) + 'Skeletons';
+        const importPath = `'../${outDir}/${selected}.skeletons.json'`;
+        setSaveSnippet({ varName, importPath, filePath: data.file, isDescriptor: false });
+      } else if (!data.ok) {
+        setSaveMsg(`Error: ${data.error}`);
+        setSaveSnippet(null);
+      }
     });
 
-    return () => { s1.remove(); s2.remove(); s3.remove(); };
-  }, [client, selected]);
+    const s4 = client.onMessage('save-descriptor-result', (data) => {
+      setDescState(data.ok ? 'ok' : 'error');
+      if (data.ok && data.file && selected) {
+        setDescMsg(`✓  Saved .ts`);
+        const varName = selected.replace(/-([a-z])/g, (_: string, c: string) => c.toUpperCase()) + 'Skeletons';
+        const importPath = `'../${outDir}/${selected}.skeletons'`;
+        setSaveSnippet({ varName, importPath, filePath: data.file, isDescriptor: true });
+      } else if (!data.ok) {
+        setDescMsg(`Error: ${data.error}`);
+        setSaveSnippet(null);
+      }
+    });
+
+    return () => { s1.remove(); s2.remove(); s3.remove(); s4.remove(); };
+  }, [client, selected, outDir]);
+
+  const resetSaveState = useCallback(() => {
+    setSaveState('idle'); setSaveMsg('');
+    setDescState('idle'); setDescMsg('');
+    setSaveSnippet(null);
+  }, []);
 
   const capture = useCallback(() => {
     if (!client || !selected) return;
     setCapturing(true);
     setResult(null);
     setSkeletons([]);
+    resetSaveState();
     client.send('capture-request', { name: selected });
-  }, [client, selected]);
+  }, [client, selected, resetSaveState]);
 
   const deleteSkeleton = useCallback((origIdx: number) => {
     setSkeletons((prev) => prev.filter((b) => b._origIdx !== origIdx));
-    setSaveState('idle');
-    setSaveMsg('');
-  }, []);
+    resetSaveState();
+  }, [resetSaveState]);
 
-  // Save goes through the Rozenite bridge → react-native.ts → Metro /skeleton-save → disk
+  // Save JSON → Metro /skeleton-save → disk
   const save = useCallback(() => {
     if (!client || !result || skeletons.length === 0) return;
     setSaveState('saving');
     setSaveMsg('');
+    setSaveSnippet(null);
     client.send('save-request', {
+      name: result.name,
+      outDir,
+      viewportWidth: result.viewportWidth,
+      height: result.height,
+      skeletons: skeletons.map(({ _origIdx: _i, ...b }) => b),
+    });
+  }, [client, result, skeletons, outDir]);
+
+  // Save Descriptor (.ts) → Metro /skeleton-save → disk
+  const saveDescriptor = useCallback(() => {
+    if (!client || !result || skeletons.length === 0) return;
+    setDescState('saving');
+    setDescMsg('');
+    setSaveSnippet(null);
+    client.send('save-descriptor-request', {
       name: result.name,
       outDir,
       viewportWidth: result.viewportWidth,
@@ -141,7 +183,7 @@ export default function SkeletonInspectorPanel() {
                 <Pressable
                   key={name}
                   style={[s.listItem, selected === name && s.listItemActive]}
-                  onPress={() => { setSelected(name); setResult(null); setSaveState('idle'); }}
+                  onPress={() => { setSelected(name); setResult(null); resetSaveState(); }}
                 >
                   <Text style={[s.listItemText, selected === name && s.listItemTextActive]}>
                     {name}
@@ -170,6 +212,27 @@ export default function SkeletonInspectorPanel() {
                 <Text style={s.stat}>{result.viewportWidth} × {result.height} dp</Text>
               </View>
 
+              {/* ── Save Descriptor (.ts) — recommended, cross-platform ── */}
+              <Pressable
+                style={[s.btn, s.btnDescriptor, (descState === 'saving' || skeletons.length === 0) && s.btnDisabled]}
+                onPress={saveDescriptor}
+                disabled={descState === 'saving' || skeletons.length === 0}
+              >
+                {descState === 'saving'
+                  ? <ActivityIndicator size="small" color="#fff" />
+                  : <Text style={s.btnText}>
+                      {descState === 'ok' ? '✓  .ts Saved' : '↓  Save .ts  (Responsive)'}
+                    </Text>}
+              </Pressable>
+              <Text style={s.btnSubtitle}>x/w scale on every device · pixel-perfect y/h</Text>
+
+              {descMsg !== '' && (
+                <Text style={[s.saveMsg, { color: descState === 'ok' ? '#22c55e' : '#ef4444' }]}>
+                  {descMsg}
+                </Text>
+              )}
+
+              {/* ── Save JSON — pixel-perfect on capture device ── */}
               <Pressable
                 style={[s.btn, s.btnSave, (saveState === 'saving' || skeletons.length === 0) && s.btnDisabled]}
                 onPress={save}
@@ -178,14 +241,19 @@ export default function SkeletonInspectorPanel() {
                 {saveState === 'saving'
                   ? <ActivityIndicator size="small" color="#fff" />
                   : <Text style={s.btnText}>
-                      {saveState === 'ok' ? '✓  Saved' : '↓  Save skeleton.json'}
+                      {saveState === 'ok' ? '✓  JSON Saved' : '↓  Save skeletons.json'}
                     </Text>}
               </Pressable>
+              <Text style={s.btnSubtitle}>Pixel-perfect on capture device</Text>
 
               {saveMsg !== '' && (
                 <Text style={[s.saveMsg, { color: saveState === 'ok' ? '#22c55e' : '#ef4444' }]}>
                   {saveMsg}
                 </Text>
+              )}
+
+              {saveSnippet && (
+                <SaveSnippet snippet={saveSnippet} />
               )}
             </>
           )}
@@ -213,6 +281,80 @@ export default function SkeletonInspectorPanel() {
           )}
       </View>
 
+    </View>
+  );
+}
+
+// ── Save snippet card ─────────────────────────────────────────────────────────────
+
+interface SnippetInfo { varName: string; importPath: string; filePath: string; isDescriptor: boolean }
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(() => {
+    try { (navigator as any).clipboard?.writeText(text); } catch {}
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
+  return (
+    <Pressable onPress={copy} style={s.copyBtn}>
+      <Text style={s.copyBtnText}>{copied ? '✓ Copied' : 'Copy'}</Text>
+    </Pressable>
+  );
+}
+
+function CodeLine({ children }: { children: string }) {
+  return <Text style={s.snippetLine} selectable>{children}</Text>;
+}
+
+function SaveSnippet({ snippet }: { snippet: SnippetInfo }) {
+  const importLine = `import ${snippet.varName} from ${snippet.importPath};`;
+  const usageLine = [
+    `<Skeleton`,
+    `  initialSkeletons={${snippet.varName}}`,
+    `  loading={loading}`,
+    `>`,
+    `  <YourComponent />`,
+    `</Skeleton>`,
+  ].join('\n');
+  const fullSnippet = `${importLine}\n\n${usageLine}`;
+
+  return (
+    <View style={s.snippetBox}>
+      {/* Header row */}
+      <View style={s.snippetHeader}>
+        <Text style={s.snippetTitle}>
+          {snippet.isDescriptor ? '✅ Add to your screen:' : '📄 Add to your screen:'}
+        </Text>
+        <CopyButton text={fullSnippet} />
+      </View>
+
+      {/* Code block */}
+      <View style={s.snippetCode}>
+        <CodeLine>{importLine}</CodeLine>
+        <View style={s.snippetSpacer} />
+        <CodeLine>{'<Skeleton'}</CodeLine>
+        <CodeLine>{`  initialSkeletons={${snippet.varName}}`}</CodeLine>
+        <CodeLine>{'  loading={loading}'}</CodeLine>
+        <CodeLine>{'>'}</CodeLine>
+        <CodeLine>{'  <YourComponent />'}</CodeLine>
+        <CodeLine>{'</Skeleton>'}</CodeLine>
+      </View>
+
+      {/* Hint */}
+      <View style={s.snippetHint}>
+        {snippet.isDescriptor ? (
+          <Text style={s.snippetHintText}>
+            {'x/w are percentages → scale on every screen size.\ny/h are exact dp from live layout measurement.'}
+          </Text>
+        ) : (
+          <Text style={s.snippetHintText}>
+            {'Pixel-perfect on capture device.\nUse '}
+            <Text style={s.snippetHintBold}>Save .ts</Text>
+            {' for responsive TypeScript version.'}
+          </Text>
+        )}
+      </View>
     </View>
   );
 }
@@ -388,15 +530,68 @@ const s = StyleSheet.create({
     marginBottom: 10, flexDirection: 'row', gap: 6,
   },
   btnCapture: { backgroundColor: '#6366f1' },
-  btnSave: { backgroundColor: '#059669' },
+  btnDescriptor: { backgroundColor: '#7c3aed' },
+  btnSave: { backgroundColor: '#059669', marginTop: 4 },
   btnDisabled: { opacity: 0.4 },
   btnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
+  btnSubtitle: { fontSize: 10, color: '#9ca3af', textAlign: 'center', marginTop: -6, marginBottom: 8 },
 
   statRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
   stat: { fontSize: 11, fontFamily: 'monospace', color: '#374151' },
 
   saveMsg: { fontSize: 12, lineHeight: 16, marginTop: 2 },
   errorMsg: { fontSize: 12, color: '#ef4444', marginTop: 8, lineHeight: 16 },
+
+  snippetBox: {
+    marginTop: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#6ee7b7',
+    backgroundColor: '#f0fdf4',
+    overflow: 'hidden',
+  },
+  snippetHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+  },
+  snippetTitle: {
+    fontSize: 13, fontWeight: '700', color: '#065f46', flex: 1,
+  },
+  copyBtn: {
+    backgroundColor: '#059669',
+    borderRadius: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  copyBtnText: {
+    color: '#fff', fontSize: 12, fontWeight: '600',
+  },
+  snippetCode: {
+    backgroundColor: '#0d1117',
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 1,
+  },
+  snippetSpacer: { height: 8 },
+  snippetLine: { fontSize: 13, lineHeight: 20, fontFamily: 'monospace', color: '#e6edf3' },
+  snippetKeyword: { color: '#cba6f7' },
+  snippetVar: { color: '#89dceb' },
+  snippetStr: { color: '#a6e3a1' },
+  snippetTag: { color: '#89b4fa' },
+  snippetAttr: { color: '#fab387' },
+  snippetHint: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#bbf7d0',
+  },
+  snippetHintText: { fontSize: 12, color: '#047857', lineHeight: 18 },
+  snippetHintBold: { fontWeight: '700' },
+  snippetCode2: { fontFamily: 'monospace', fontSize: 12 },
 
   preview: { flex: 1, backgroundColor: '#fff' },
   previewContent: { padding: 20, gap: 16 },

@@ -14,6 +14,16 @@ const EXAMPLES: { route: RouteName; title: string; description: string; highligh
   { route: 'Profile', title: 'Profile Card', description: 'Centred avatar, stats, and action buttons' },
   { route: 'ProductGrid', title: 'Product Grid', description: 'Two-column grid with image + price' },
   { route: 'Notifications', title: 'Notifications', description: 'Icon circle + title + body + timestamp' },
+  {
+    route: 'Shimmer',
+    title: '✨ Shimmer Effect',
+    description: 'General-purpose highlight — buttons, images, any content',
+  },
+  {
+    route: 'ShimmerPlaceholder',
+    title: '▭ Shimmer Placeholder',
+    description: 'Fixed-size loading boxes with gradient sweep — drop-in for react-native-shimmer-placeholder',
+  },
 ];
 
 export function HomeScreen() {

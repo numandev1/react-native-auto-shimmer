@@ -1,83 +1,177 @@
-import { NativeModules as g } from "react-native";
-const c = "__rnAutoShimmerCaptureRegistry__";
-function h() {
+import { NativeModules as $ } from "react-native";
+const h = "__rnAutoShimmerCaptureRegistry__";
+function d() {
   const e = globalThis;
-  return e[c] || (e[c] = /* @__PURE__ */ new Map()), e[c];
+  return e[h] || (e[h] = /* @__PURE__ */ new Map()), e[h];
 }
-const y = "react-native-auto-shimmer";
-function m(e) {
-  const s = v();
-  function n() {
-    const t = h();
-    e.send("registered-components", { names: [...t.keys()] });
+const k = "react-native-auto-shimmer";
+function S(e) {
+  const n = v();
+  function t() {
+    const s = d();
+    e.send("registered-components", { names: [...s.keys()] });
   }
-  n();
-  const p = setInterval(n, 2e3);
-  return e.onMessage("capture-request", async ({ name: t }) => {
-    const a = h().get(t);
-    if (!a) {
+  t();
+  const p = setInterval(t, 2e3);
+  return e.onMessage("capture-request", async ({ name: s }) => {
+    const c = d().get(s);
+    if (!c) {
       e.send("capture-result", {
-        name: t,
+        name: s,
         viewportWidth: 0,
         height: 0,
         skeletons: [],
-        error: `No mounted <SkeletonCapture name="${t}"> found.
+        error: `No mounted <SkeletonCapture name="${s}"> found.
 Navigate to the screen that wraps this component.`
       });
       return;
     }
     try {
-      const o = await a.capture();
+      const o = await c.capture();
       e.send("capture-result", o);
     } catch (o) {
       e.send("capture-result", {
-        name: t,
+        name: s,
         viewportWidth: 0,
         height: 0,
         skeletons: [],
         error: String(o?.message ?? o)
       });
     }
-  }), e.onMessage("save-request", async ({ name: t, outDir: i, viewportWidth: a, height: o, skeletons: d }) => {
-    if (!s) {
+  }), e.onMessage("save-request", async ({ name: s, outDir: l, viewportWidth: c, height: o, skeletons: r }) => {
+    if (!n) {
       e.send("save-result", {
         ok: !1,
         error: "Could not resolve Metro server URL. Make sure Metro is running."
       });
       return;
     }
-    const l = `${s}/skeleton-save`;
+    const i = `${n}/skeleton-save`;
     try {
-      const r = await fetch(l, {
+      const u = await fetch(i, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: t, outDir: i, viewportWidth: a, height: o, skeletons: d })
+        body: JSON.stringify({ name: s, outDir: l, viewportWidth: c, height: o, skeletons: r })
       });
-      if (r.ok) {
-        const u = await r.json();
-        e.send("save-result", { ok: !0, file: u.file, skeletons: u.skeletons });
+      if (u.ok) {
+        const a = await u.json();
+        e.send("save-result", { ok: !0, file: a.file, skeletons: a.skeletons });
       } else {
-        const u = await r.text().catch(() => `HTTP ${r.status}`);
-        e.send("save-result", { ok: !1, error: u });
+        const a = await u.text().catch(() => `HTTP ${u.status}`);
+        e.send("save-result", { ok: !1, error: a });
       }
-    } catch (r) {
+    } catch (u) {
       e.send("save-result", {
         ok: !1,
-        error: `Could not reach Metro at ${l}.
-${r?.message ?? String(r)}`
+        error: `Could not reach Metro at ${i}.
+${u?.message ?? String(u)}`
+      });
+    }
+  }), e.onMessage("save-descriptor-request", async ({ name: s, outDir: l, viewportWidth: c, height: o, skeletons: r }) => {
+    if (!n) {
+      e.send("save-descriptor-result", {
+        ok: !1,
+        error: "Could not resolve Metro server URL. Make sure Metro is running."
+      });
+      return;
+    }
+    const i = m(s, c, o, r), u = `${n}/skeleton-save`;
+    try {
+      const a = await fetch(u, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: s,
+          outDir: l,
+          viewportWidth: c,
+          height: o,
+          skeletons: r,
+          asDescriptor: !0,
+          descriptorSource: i
+        })
+      });
+      if (a.ok) {
+        const f = await a.json();
+        e.send("save-descriptor-result", { ok: !0, file: f.file });
+      } else {
+        const f = await a.text().catch(() => `HTTP ${a.status}`);
+        e.send("save-descriptor-result", { ok: !1, error: f });
+      }
+    } catch (a) {
+      e.send("save-descriptor-result", {
+        ok: !1,
+        error: `Could not reach Metro at ${u}.
+${a?.message ?? String(a)}`
       });
     }
   }), () => clearInterval(p);
 }
+function g(e, n, t) {
+  const p = e.w, s = e.r === "50%", l = p > 85, c = p > 50, o = e.h > 100, r = !!e.c;
+  return r && s ? `piece ${t} — button container` : r ? `piece ${t} — container (background layer)` : s && e.h >= 60 ? `piece ${t} — avatar circle` : s && e.h >= 30 ? `piece ${t} — icon circle` : s ? `piece ${t} — small circle` : o && l ? `piece ${t} — hero image / banner` : o && c ? `piece ${t} — image` : l && e.h >= 36 ? `piece ${t} — block (button / card section)` : l && e.h >= 20 ? `piece ${t} — text line (full width)` : l ? `piece ${t} — thin line` : c && e.h >= 36 ? `piece ${t} — block` : c && e.h <= 25 ? `piece ${t} — text line` : p < 20 && e.h <= 15 ? `piece ${t} — timestamp / label` : p < 20 ? `piece ${t} — small element` : e.h <= 20 ? `piece ${t} — text line` : `piece ${t}`;
+}
+function m(e, n, t, p) {
+  const s = e.replace(/-([a-z])/g, (r, i) => i.toUpperCase()) + "Skeletons", l = (/* @__PURE__ */ new Date()).toISOString().slice(0, 10), c = [...p].map((r, i) => ({ ...r, origIdx: i })).sort((r, i) => r.y - i.y), o = [];
+  for (const r of c) {
+    const i = r.r === "50%" ? "'50%'" : String(r.r), u = g(r, n, r.origIdx), a = [
+      `x: ${r.x}`,
+      `y: ${r.y}`,
+      `w: ${r.w}`,
+      `h: ${r.h}`,
+      `r: ${i}`
+    ];
+    r.c && a.push("c: true"), o.push(`        // ${u}`), o.push(`        { ${a.join(", ")} },`);
+  }
+  return [
+    "import type { ResponsiveSkeletons } from 'react-native-auto-shimmer';",
+    "",
+    "/**",
+    ` * Auto-generated by Skeleton Inspector — ${l}`,
+    ` * Component : ${e}`,
+    ` * Captured  : ${n}dp wide · ${t}dp tall · ${p.length} pieces`,
+    " *",
+    " * ✅ Pixel-perfect: x/w are percentages so widths scale on any screen.",
+    " *    y/h are exact dp values measured from the live layout.",
+    " *",
+    " * 💡 To improve cross-platform responsiveness:",
+    " *    - Add more breakpoints captured on other device sizes",
+    " *    - Or switch to a SkeletonDescriptor (descriptor prop) for fully",
+    " *      runtime-computed layout that adapts to any container width",
+    " *",
+    " * Usage:",
+    ` *   import ${s} from './${e}.skeletons';`,
+    ` *   <Skeleton initialSkeletons={${s}} loading={loading}>`,
+    " *     <YourComponent />",
+    " *   </Skeleton>",
+    " */",
+    `const ${s}: ResponsiveSkeletons = {`,
+    "  breakpoints: {",
+    `    ${n}: {`,
+    `      name: '${e}',`,
+    `      viewportWidth: ${n},`,
+    `      width: ${n},`,
+    `      height: ${t},`,
+    "      skeletons: [",
+    ...o,
+    "      ],",
+    "    },",
+    "  },",
+    "};",
+    "",
+    `export default ${s};`,
+    ""
+  ].join(`
+`);
+}
 function v() {
   try {
-    const e = g.DevSettings ?? g.RCTDevSettings, s = e?.scriptURL ?? e?.packagerHost;
-    if (s)
+    const e = $.DevSettings ?? $.RCTDevSettings, n = e?.scriptURL ?? e?.packagerHost;
+    if (n)
       try {
-        const n = new URL(s);
-        return `${n.protocol}//${n.host}`;
+        const t = new URL(n);
+        return `${t.protocol}//${t.host}`;
       } catch {
-        return `http://${s.replace(/\/.*$/, "")}`;
+        return `http://${n.replace(/\/.*$/, "")}`;
       }
     return "http://localhost:8081";
   } catch {
@@ -85,6 +179,6 @@ function v() {
   }
 }
 export {
-  y as PLUGIN_ID,
-  m as default
+  k as PLUGIN_ID,
+  S as default
 };

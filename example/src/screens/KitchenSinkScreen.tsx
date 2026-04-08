@@ -23,13 +23,13 @@ import {
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
 
-// ── Skeletons ──────────────────────────────────────────────────────────────────────
-import cardSkeletons from '../skeletons/card.skeletons.json';
-import feedPostSkeletons from '../skeletons/feedPost.skeletons.json';
-import feedPostTextSkeletons from '../skeletons/feedPostText.skeletons.json';
-import profileSkeletons from '../skeletons/profile.skeletons.json';
-import productItemSkeletons from '../skeletons/productItem.skeletons.json';
-import notificationSkeletons from '../skeletons/notification.skeletons.json';
+// ── Skeletons (descriptor-driven — responsive on every device) ─────────────────────
+import cardSkeletons from '../skeletons/card.skeletons';
+import feedPostSkeletons from '../skeletons/feedPost.skeletons';
+import feedPostTextSkeletons from '../skeletons/feedPostText.skeletons';
+import profileSkeletons from '../skeletons/profile.skeletons';
+import productItemSkeletons from '../skeletons/productItem.skeletons';
+import notificationSkeletons from '../skeletons/notification.skeletons';
 
 // ── Layout constants ───────────────────────────────────────────────────────────
 const { width: SCREEN_W } = Dimensions.get('window');

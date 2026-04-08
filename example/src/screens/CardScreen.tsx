@@ -14,7 +14,7 @@ import {
   type AnimationStyle,
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
-import cardSkeletons from '../skeletons/card.skeletons.json';
+import cardSkeletons from '../skeletons/card.skeletons';
 
 const PAD = 16;
 

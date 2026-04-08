@@ -6,6 +6,18 @@
   "main": "./dist/react-native.cjs",
   "module": "./dist/react-native.js",
   "types": "./dist/react-native.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-native.js",
+      "require": "./dist/react-native.cjs",
+      "types": "./dist/react-native.d.ts"
+    },
+    "./metro": {
+      "require": "./metro.cjs",
+      "default": "./metro.cjs"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "dev": "rozenite dev",
     "build": "rozenite build"

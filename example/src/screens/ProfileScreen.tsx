@@ -14,7 +14,7 @@ import {
   type AnimationStyle,
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
-import profileSkeletons from '../skeletons/profile.skeletons.json';
+import profileSkeletons from '../skeletons/profile.skeletons';
 
 const PAD = 16;
 

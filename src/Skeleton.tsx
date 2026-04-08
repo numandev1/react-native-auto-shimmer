@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, type ReactNode } from 'react';
+import React, { useCallback, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
   StyleSheet,
@@ -11,8 +11,9 @@ import {
 
 import { usePulseAnimation } from './animations/pulse';
 import { useShimmerAnimation } from './animations/shimmer';
+import { computeLayout } from './layout';
 import { getGlobalConfig, lookupSkeletons, resolveResponsive } from './registry';
-import { normalizeSkeleton, type AnySkeletonSkeleton, type SkeletonSkeleton, type ResponsiveSkeletons, type SkeletonResult } from './types';
+import { normalizeSkeleton, type AnySkeletonSkeleton, type SkeletonSkeleton, type SkeletonDescriptor, type ResponsiveSkeletons, type SkeletonResult } from './types';
 
 export type AnimationStyle = 'pulse' | 'shimmer' | 'solid' | boolean;
 
@@ -26,6 +27,12 @@ export interface SkeletonProps {
    * Auto-resolves skeletons so you don't need to pass `initialSkeletons` or `skeletons`.
    */
   name?: string;
+  /**
+   * Descriptor-driven skeletons — describe your component's structure and `computeLayout()`
+   * runs automatically at the real container width on every device. Fully responsive.
+   * Takes priority over `initialSkeletons` and `name`.
+   */
+  descriptor?: SkeletonDescriptor;
   /**
    * Pre-computed skeletons (a single SkeletonResult or a ResponsiveSkeletons breakpoint map).
    * Takes priority over the `name` registry lookup.
@@ -170,6 +177,7 @@ export function Skeleton({
   loading,
   children,
   name,
+  descriptor,
   initialSkeletons,
   skeletons: skeletonsProp,
   color,
@@ -202,14 +210,16 @@ export function Skeleton({
   const pulseOpacity = usePulseAnimation(loading && animStyle === 'pulse');
   const shimmerProgress = useShimmerAnimation(loading && animStyle === 'shimmer');
 
-  // Skeleton resolution: direct prop > initialSkeletons > registry lookup
+  // Skeleton resolution: descriptor > direct prop > initialSkeletons > registry lookup
   const effectiveSkeletons: SkeletonResult | ResponsiveSkeletons | undefined =
     skeletonsProp ?? initialSkeletons ?? (name ? lookupSkeletons(name) : undefined);
 
-  const activeSkeletons: SkeletonResult | null =
-    effectiveSkeletons && containerWidth > 0
-      ? resolveResponsive(effectiveSkeletons, containerWidth)
-      : null;
+  const activeSkeletons = useMemo<SkeletonResult | null>(() => {
+    if (containerWidth <= 0) return null;
+    if (descriptor) return computeLayout(descriptor, containerWidth, name ?? 'skeleton');
+    if (effectiveSkeletons) return resolveResponsive(effectiveSkeletons, containerWidth);
+    return null;
+  }, [descriptor, name, effectiveSkeletons, containerWidth]);
 
   const showSkeleton = loading && activeSkeletons !== null;
   const showFallback = loading && activeSkeletons === null;

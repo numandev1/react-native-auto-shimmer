@@ -15,7 +15,7 @@ import {
   type AnimationStyle,
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
-import productItemSkeletons from '../skeletons/productItem.skeletons.json';
+import productItemSkeletons from '../skeletons/productItem.skeletons';
 
 const W = Dimensions.get('window').width;
 const PAD = 16;

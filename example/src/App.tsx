@@ -7,6 +7,8 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { ProductGridScreen } from './screens/ProductGridScreen';
 import { NotificationsScreen } from './screens/NotificationsScreen';
 import { KitchenSinkScreen } from './screens/KitchenSinkScreen';
+import { ShimmerScreen } from './screens/ShimmerScreen';
+import { ShimmerPlaceholderScreen } from './screens/ShimmerPlaceholderScreen';
 
 // Wire up the Rozenite Skeleton Inspector plugin in dev mode.
 // getRozeniteDevToolsClient connects to the DevTools via the Fusebox dispatcher,
@@ -37,7 +39,9 @@ export default function App() {
           case 'ProductGrid':  return <ProductGridScreen />;
           case 'Notifications': return <NotificationsScreen />;
           case 'KitchenSink':  return <KitchenSinkScreen />;
-          default:             return <HomeScreen />;
+          case 'Shimmer':      return <ShimmerScreen />;
+          case 'ShimmerPlaceholder': return <ShimmerPlaceholderScreen />;
+          default:                   return <HomeScreen />;
         }
       }}
     </Navigator>

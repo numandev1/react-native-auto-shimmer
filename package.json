@@ -46,14 +46,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shobbak/react-native-auto-shimmer.git"
+    "url": "git+https://github.com/numandev1/react-native-auto-shimmer.git"
   },
-  "author": "Numan <numan@shobbak.com> (https://github.com/shobbak)",
+  "author": "Numan <muhammadnuman70@gmail.com> (https://github.com/numandev1)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shobbak/react-native-auto-shimmer/issues"
+    "url": "https://github.com/numandev1/react-native-auto-shimmer/issues"
   },
-  "homepage": "https://github.com/shobbak/react-native-auto-shimmer#readme",
+  "homepage": "https://github.com/numandev1/react-native-auto-shimmer#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

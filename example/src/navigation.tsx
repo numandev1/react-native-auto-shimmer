@@ -15,7 +15,9 @@ export type RouteName =
   | 'Profile'
   | 'ProductGrid'
   | 'Notifications'
-  | 'KitchenSink';
+  | 'KitchenSink'
+  | 'Shimmer'
+  | 'ShimmerPlaceholder';
 
 // ── Navigation context ────────────────────────────────────────────────────────
 

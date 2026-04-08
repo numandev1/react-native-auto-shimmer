@@ -14,8 +14,8 @@ import {
   type AnimationStyle,
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
-import feedPostSkeletons from '../skeletons/feedPost.skeletons.json';
-import feedPostTextSkeletons from '../skeletons/feedPostText.skeletons.json';
+import feedPostSkeletons from '../skeletons/feedPost.skeletons';
+import feedPostTextSkeletons from '../skeletons/feedPostText.skeletons';
 
 const PAD = 16;
 

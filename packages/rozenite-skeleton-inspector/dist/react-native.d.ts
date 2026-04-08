@@ -1,6 +1,6 @@
 import { DevToolsPluginClient } from '@rozenite/plugin-bridge';
 export declare const PLUGIN_ID = "react-native-auto-shimmer";
-export interface Skeleton {
+export interface SkeletonPiece {
     x: number;
     y: number;
     w: number;
@@ -16,7 +16,7 @@ export interface PluginEvents {
         name: string;
         viewportWidth: number;
         height: number;
-        skeletons: Skeleton[];
+        skeletons: SkeletonPiece[];
         error?: string;
     };
     'registered-components': {
@@ -27,12 +27,24 @@ export interface PluginEvents {
         outDir: string;
         viewportWidth: number;
         height: number;
-        skeletons: Skeleton[];
+        skeletons: SkeletonPiece[];
     };
     'save-result': {
         ok: boolean;
         file?: string;
         skeletons?: number;
+        error?: string;
+    };
+    'save-descriptor-request': {
+        name: string;
+        outDir: string;
+        viewportWidth: number;
+        height: number;
+        skeletons: SkeletonPiece[];
+    };
+    'save-descriptor-result': {
+        ok: boolean;
+        file?: string;
         error?: string;
     };
 }

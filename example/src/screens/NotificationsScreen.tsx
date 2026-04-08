@@ -13,7 +13,7 @@ import {
   type AnimationStyle,
 } from 'react-native-auto-shimmer';
 import { ScreenShell } from '../navigation';
-import notificationSkeletons from '../skeletons/notification.skeletons.json';
+import notificationSkeletons from '../skeletons/notification.skeletons';
 
 const PAD = 16;
 

@@ -28,3 +28,22 @@ export { Skeleton, type AnimationStyle, type SkeletonProps } from './Skeleton';
 // Dev-only runtime capture component — registers with the Skeleton Inspector DevTools panel.
 // No-op in production builds.
 export { SkeletonCapture, type SkeletonCaptureProps } from './SkeletonCapture';
+
+// General-purpose shimmer highlight effect — works on any content
+export {
+  ShimmerOverlay,
+  type ShimmerOverlayProps,
+  type ShimmerOverlayRef,
+  type ShimmerOverlayMode,
+  type ShimmerOverlayPosition,
+  type ShimmerOverlayDirection,
+} from './Shimmer';
+
+// Fixed-size loading placeholder — no LinearGradient, no 3rd-party libs
+export {
+  ShimmerPlaceholder,
+  createShimmerPlaceholder,
+  type ShimmerPlaceholderProps,
+  type ShimmerPlaceholderRef,
+} from './ShimmerPlaceholder';
+
