@@ -24,8 +24,8 @@
   },
   "private": true,
   "devDependencies": {
-    "@react-native-auto-shimmer/rozenite-plugin": "*",
     "@rozenite/metro": "^1.6.0",
+    "react-native-auto-shimmer-rozenite-plugin": "*",
     "react-native-builder-bob": "^0.41.0",
     "react-native-monorepo-config": "^0.3.3",
     "tsx": "^4.21.0"

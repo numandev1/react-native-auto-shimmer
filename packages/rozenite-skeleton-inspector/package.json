@@ -1,5 +1,5 @@
 {
-  "name": "@react-native-auto-shimmer/rozenite-plugin",
+  "name": "react-native-auto-shimmer-rozenite-plugin",
   "version": "0.0.2",
   "description": "Rozenite DevTools plugin for react-native-auto-shimmer — visual skeleton inspector",
   "type": "module",
@@ -49,7 +49,6 @@
     "react-native": "*"
   },
   "publishConfig": {
-    "access": "public",
     "registry": "https://registry.npmjs.org/"
   }
 }

@@ -147,7 +147,7 @@ yarn add react-native-auto-shimmer
 ### 1 — Install dev dependencies
 
 ```sh
-yarn add -D @rozenite/metro @react-native-auto-shimmer/rozenite-plugin
+yarn add -D @rozenite/metro react-native-auto-shimmer-rozenite-plugin
 ```
 
 ### 2 — Configure Metro
@@ -156,7 +156,7 @@ yarn add -D @rozenite/metro @react-native-auto-shimmer/rozenite-plugin
 // metro.config.js
 const { getDefaultConfig } = require('@expo/metro-config'); // or require('metro-config')
 const { withRozenite } = require('@rozenite/metro');
-const { withSkeletonInspector } = require('@react-native-auto-shimmer/rozenite-plugin/metro');
+const { withSkeletonInspector } = require('react-native-auto-shimmer-rozenite-plugin/metro');
 
 let config = getDefaultConfig(__dirname);
 config = withSkeletonInspector(config);
@@ -174,7 +174,7 @@ module.exports = config;
 // App.tsx or index.js
 if (__DEV__) {
   const { getRozeniteDevToolsClient } = require('@rozenite/plugin-bridge');
-  const setupPlugin = require('@react-native-auto-shimmer/rozenite-plugin').default;
+  const setupPlugin = require('react-native-auto-shimmer-rozenite-plugin').default;
 
   getRozeniteDevToolsClient('react-native-auto-shimmer')
     .then((client) => setupPlugin(client))

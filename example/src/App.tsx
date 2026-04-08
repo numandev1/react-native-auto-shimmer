@@ -17,7 +17,7 @@ if (__DEV__) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { getRozeniteDevToolsClient } = require('@rozenite/plugin-bridge');
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const setupPlugin = require('@react-native-auto-shimmer/rozenite-plugin').default;
+  const setupPlugin = require('react-native-auto-shimmer-rozenite-plugin').default;
   getRozeniteDevToolsClient('react-native-auto-shimmer')
     .then((client: any) => {
       setupPlugin(client);

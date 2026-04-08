@@ -1,4 +1,4 @@
-# @react-native-auto-shimmer/rozenite-plugin
+# react-native-auto-shimmer-rozenite-plugin
 
 Rozenite DevTools plugin for `react-native-auto-shimmer` — capture pixel-perfect skeletons directly from your running app with visual verification before saving.
 
@@ -30,7 +30,7 @@ App (simulator)                     React Native DevTools
 ## Installation
 
 ```bash
-yarn add -D @rozenite/metro @react-native-auto-shimmer/rozenite-plugin
+yarn add -D @rozenite/metro react-native-auto-shimmer-rozenite-plugin
 ```
 
 ## Setup
@@ -46,7 +46,7 @@ let config = getDefaultConfig(__dirname);
 if (process.env.WITH_ROZENITE === 'true') {
   config = withRozenite(config, {
     enabled: true,
-    include: ['@react-native-auto-shimmer/rozenite-plugin'],
+    include: ['react-native-auto-shimmer-rozenite-plugin'],
   });
 }
 
@@ -58,7 +58,7 @@ module.exports = config;
 ```tsx
 if (__DEV__) {
   const { getRozeniteDevToolsClient } = require('@rozenite/plugin-bridge');
-  const setupPlugin = require('@react-native-auto-shimmer/rozenite-plugin').default;
+  const setupPlugin = require('react-native-auto-shimmer-rozenite-plugin').default;
 
   getRozeniteDevToolsClient('react-native-auto-shimmer')
     .then((client) => setupPlugin(client))
