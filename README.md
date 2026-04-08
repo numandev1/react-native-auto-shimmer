@@ -2,6 +2,8 @@
 
 <img src="media/logo.gif" alt="react-native-auto-shimmer" width="420" />
 
+# React Native Auto Shimmer
+
 ### Stop hand-coding skeleton screens. Capture them from your real UI in one click.
 
 [![npm version](https://img.shields.io/npm/v/react-native-auto-shimmer?color=6366f1&style=flat-square)](https://www.npmjs.com/package/react-native-auto-shimmer)
