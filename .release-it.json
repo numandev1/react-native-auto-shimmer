@@ -11,6 +11,6 @@
   },
   "hooks": {
     "after:bump": "npm --prefix packages/rozenite-skeleton-inspector version ${version} --no-git-tag-version",
-    "after:release": "yarn workspace @react-native-auto-shimmer/rozenite-plugin npm publish"
+    "after:release": "npm publish --workspace packages/rozenite-skeleton-inspector"
   }
 }
