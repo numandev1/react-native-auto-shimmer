@@ -21,7 +21,6 @@ import {
   useImperativeHandle,
   useMemo,
   useRef,
-  useState,
   type ForwardedRef,
   type ReactNode,
 } from 'react';
@@ -127,7 +126,6 @@ function buildGradientProfile(
   // Approximate the gradient by blending between the three colour stops.
   // We map each column index to a position in [0, 1] and sample the gradient.
   const result: Array<{ color: string; alpha: number }> = [];
-  const mid = (colCount - 1) / 2;
 
   for (let i = 0; i < colCount; i++) {
     const t = i / (colCount - 1); // 0 → 1 across the band
@@ -178,8 +176,7 @@ function ShimmerPlaceholderComponent(
   ref: ForwardedRef<ShimmerPlaceholderRef>
 ): React.ReactElement {
   const sweep = useRef(new Animated.Value(0)).current;
-  const loopRef = useRef<Animated.CompositeAnimation | null>(null);
-  const [running, setRunning] = useState(false);
+  const loopRef = useRef<ReturnType<typeof Animated.loop> | null>(null);
 
   // ── Gradient profile (only recomputed when colours change) ─────────────────
   const gradientProfile = useMemo(
@@ -219,13 +216,11 @@ function ShimmerPlaceholderComponent(
       ])
     );
     loopRef.current.start();
-    setRunning(true);
   }, [sweep, duration, delay]);
 
   const stop = useCallback(() => {
     loopRef.current?.stop();
     loopRef.current = null;
-    setRunning(false);
   }, []);
 
   useImperativeHandle(ref, () => ({ start, stop }), [start, stop]);

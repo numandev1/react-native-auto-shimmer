@@ -1,0 +1,16 @@
+{
+  "npm": {
+    "publish": true
+  },
+  "git": {
+    "commitMessage": "chore: release v${version}",
+    "tagName": "v${version}"
+  },
+  "github": {
+    "release": false
+  },
+  "hooks": {
+    "after:bump": "npm --prefix packages/rozenite-skeleton-inspector version ${version} --no-git-tag-version",
+    "after:release": "yarn workspace @react-native-auto-shimmer/rozenite-plugin npm publish"
+  }
+}

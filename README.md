@@ -2,8 +2,7 @@
 
 <img src="media/logo.gif" alt="react-native-auto-shimmer" width="420" />
 
-**Pixel-perfect skeleton loading screens — captured directly from your running UI.**  
-No manual measurement. No guesswork. One click.
+### Stop hand-coding skeleton screens. Capture them from your real UI in one click.
 
 [![npm version](https://img.shields.io/npm/v/react-native-auto-shimmer?color=6366f1&style=flat-square)](https://www.npmjs.com/package/react-native-auto-shimmer)
 [![npm downloads](https://img.shields.io/npm/dm/react-native-auto-shimmer?color=059669&style=flat-square)](https://www.npmjs.com/package/react-native-auto-shimmer)
@@ -14,124 +13,99 @@ No manual measurement. No guesswork. One click.
 
 <br/>
 
+**⭐ If this saves you time, star the repo — it takes 2 seconds and helps others find it.**
+
+<br/>
+
 <table>
 <tr>
-<td align="center" width="33%">
+<td align="center" width="25%">
 
 **Auto Pulse**
-
 ![pulse animation](media/simulator_with_pulse.gif)
 
 </td>
-<td align="center" width="33%">
+<td align="center" width="25%">
 
-**Auto shimmer**
-
+**Auto Shimmer**
 ![shimmer animation](media/simulator_with_shimmer.gif)
 
 </td>
-<td align="center" width="33%">
+<td align="center" width="25%">
 
-**Manual ShimmerOverlay**
-
+**ShimmerOverlay**
 ![shimmer overlay effect](media/shimmer_overlay.gif)
 
 </td>
-<td align="center" width="33%">
+<td align="center" width="25%">
 
-**Manual ShimmerPlaceholder**
-
-![shimmer overlay effect](media/shimmer_placeholder.gif)
+**ShimmerPlaceholder**
+![shimmer placeholder effect](media/shimmer_placeholder.gif)
 
 </td>
 </tr>
+<tr>
+<td align="center">Auto-captured from live UI</td>
+<td align="center">Auto-captured from live UI</td>
+<td align="center">Wrap any element</td>
+<td align="center">Fixed-size box</td>
+</tr>
 </table>
-
-<br/>
 
 </div>
 
-<br/>
+---
 
-> ⭐ **If this saves you time, drop a star** — it helps others discover the library!
+## The problem with skeleton screens today
+
+Every React Native developer has been here:
+
+```
+🤦 "OK let me eyeball this card width... maybe 340px? Let me check on a different device..."
+🤦 "The design changed again. Rebuild all the skeletons."
+🤦 "Why does the skeleton not match the real layout on iPad?"
+```
+
+Building skeletons by hand is a time sink that should not exist. **react-native-auto-shimmer fixes this permanently.**
 
 ---
 
-## Why react-native-auto-shimmer?
-
-Building skeleton screens is tedious. You eyeball pixel values, hardcode widths, and then redo it all when the design changes. **react-native-auto-shimmer eliminates that entirely.**
-
-| The old way | With auto-shimmer |
-|---|---|
-| ❌ Manually measure every element | ✅ One-click capture from live UI |
-| ❌ Hardcoded pixel values that break | ✅ % widths that adapt to any screen |
-| ❌ Skeleton drifts from real layout | ✅ Always matches — captured from truth |
-| ❌ Rebuild skeletons after redesigns | ✅ Re-capture in 10 seconds |
-| ❌ Complex per-platform setup | ✅ Zero native code, works with Expo |
-
----
-
-## Features
-
-- **⬡ Visual skeleton inspector** — a built-in DevTools panel shows every captured skeleton with a numbered colour overlay
-- **🎯 One-click capture** — skeletons are measured from the live fiber tree via `UIManager.measure` (real layout, not estimates)
-- **✂️ Edit before saving** — delete noisy skeletons visually; canvas redraws instantly
-- **📐 Responsive by default** — `x` and `w` are stored as percentages so skeletons scale across device sizes
-- **🌓 Dark mode built-in** — `color` / `darkColor` props, reads `useColorScheme()` automatically
-- **✨ Two animation styles** — `pulse` (native thread) or `shimmer` (sweeping highlight)
-- **▭ `ShimmerPlaceholder`** — manual fixed-size loading boxes; drop-in for `react-native-shimmer-placeholder`, zero dependencies
-- **✦ `ShimmerOverlay`** — wrap any content with a diagonal highlight sweep
-- **🏭 Zero native modules** — no `pod install`, no Gradle changes, no linking
-- **⚡ New Architecture ready** — works on both Fabric and legacy renderers
-- **📦 Tiny** — the runtime is a few KB; `<SkeletonCapture>` is a no-op in production
-
----
-
-## How it works
+## How it works (30 seconds)
 
 ![Skeleton Inspector live capture](media/simulator_with_debugger.png)
 
 <div align="center">
 
-*Live capture —> simulator on the right, Skeleton Inspector DevTools panel on the left*
+*The Skeleton Inspector DevTools panel — click Capture, get pixel-perfect skeletons instantly*
 
 </div>
 
-<br/>
+1. **Wrap** your component with `<SkeletonCapture name="card">`
+2. **Open** Skeleton Inspector in React Native DevTools
+3. **Click Capture** — real skeleton geometry is measured from the live fiber tree
+4. **Delete** any unwanted pieces with the trash icon
+5. **Save** — a TypeScript file lands in `src/skeletons/` with a ready-to-paste code snippet
+6. **Done** — skeletons that match your UI exactly, on every device size
 
-```
-Your app (simulator / device)                React Native DevTools
-┌──────────────────────────────┐             ┌──────────────────────────────────────┐
-│                              │             │  ⬡  Skeleton Inspector               │
-│  <Skeleton loading={…}>      │             │                                      │
-│    <SkeletonCapture          │  Rozenite   │  MOUNTED COMPONENTS                  │
-│       name="card">           │◄───bridge──►│  ▸ card           ← select           │
-│      <MyCard />              │             │  ▸ feedPost                          │
-│    </SkeletonCapture>        │             │                                      │
-│  </Skeleton>                 │             │  ⬡  Capture       ← click            │
-└──────────────────────────────┘             │  14 skeletons · 408 × 325 dp             │
-         │                                   │                                      │
-         │  UIManager.measure                │  ┌────────────────────────────────┐  │
-         │  walks fiber tree                 │  │  0  ████████████████████████   │  │
-         └──────────────────────────────────►│  │     1  ██████████████          │  │
-                                             │  │  2  ████████████████████████   │  │
-                                             │  └────────────────────────────────┘  │
-                                             │                                      │
-                                             │  ↓  Save skeleton.json  ← click        │
-                                             └──────────────────────────────────────┘
-                                                              │
-                                               src/skeletons/card.skeletons.json  ✓
-```
+No guessing. No hardcoding. No drift.
 
-**The workflow in 30 seconds:**
+---
 
-1. Wrap your component with `<SkeletonCapture name="card">`
-2. Open Skeleton Inspector in React Native DevTools
-3. Click **⬡ Capture** — real skeleton geometry is measured instantly
-4. Remove any unwanted skeletons by clicking the trash icon
-5. Click **↓ Save .ts (Responsive)** for a TypeScript file that scales on every device, or **↓ Save skeletons.json** for a static JSON snapshot
-6. The inspector shows the exact import + `<Skeleton>` snippet — copy and paste it
-7. Ship. Done.
+## Three ways to use it
+
+<div align="center">
+
+| | **Auto Shimmer** ⭐ Primary | **ShimmerOverlay** | **ShimmerPlaceholder** |
+|---|---|---|---|
+| **What** | Skeleton from live UI, zero manual work | Shimmer sweep over any element | Fixed-size shimmer box |
+| **Layout** | Measured from real component | Wraps whatever you give it | You set `width` / `height` |
+| **Responsive** | ✅ % widths, any screen | — | ❌ Fixed px |
+| **Setup** | One-time DevTools capture | Wrap & go | Drop in |
+| **Use when** | Building loading screens | Shine/highlight effects | Simple one-off placeholders |
+
+</div>
+
+> **Start with Auto Shimmer.** Drop to the manual options only for quick one-offs or pure visual effects.
 
 ---
 
@@ -143,133 +117,40 @@ npm install react-native-auto-shimmer
 yarn add react-native-auto-shimmer
 ```
 
-> **Requirements:** React Native ≥ 0.68 · React ≥ 17 · No native modules · No `pod install` · Works with Expo
+> No native modules · No `pod install` · No Gradle changes · Works with Expo · React Native ≥ 0.68
 
 ---
 
-## Two approaches to skeleton data
+# Auto Shimmer ⭐
 
-There are two ways to provide skeleton data to `<Skeleton>`. Choose based on your needs:
+> The main event. Capture pixel-perfect skeleton layouts directly from your running UI — no measurement, no guesswork.
 
-| | **TypeScript `.ts`** ⭐ | **JSON `.json`** |
-|---|---|---|
-| How | Inspector auto-generates a `.ts` file with live measurements | Inspector saves raw captured data as `.json` |
-| Horizontal | ✅ `x`/`w` stored as percentages → scale to any screen width | ⚠️ All values are dp — may shift on different device widths |
-| Vertical | ✅ `y`/`h` are exact dp from live layout | ✅ `y`/`h` are exact dp from live layout |
-| Editable | ✅ Plain TypeScript — add breakpoints, conditions, comments | ❌ Static data — requires re-capture to change |
-| Auto-generate | ✅ Click **Save .ts** in the inspector | ✅ Click **Save .json** in the inspector |
-| Prop | `initialSkeletons={data}` | `initialSkeletons={data}` |
+## Before vs. After
 
-**Use `.ts`** when you target multiple screen sizes or want easy future refinement — **recommended**.  
-**Use `.json`** when you want the fastest possible save-and-ship flow on a single target device.
+```diff
+- // 😩 The old way
+- const SkeletonCard = () => (
+-   <View style={{ width: 340, height: 180, backgroundColor: '#e0e0e0' }} />
+-   <View style={{ width: 280, height: 18,  backgroundColor: '#e0e0e0', marginTop: 16 }} />
+-   <View style={{ width: 200, height: 14,  backgroundColor: '#e0e0e0', marginTop: 8  }} />
+-   // ... and redo all of this every time the design changes
+- );
 
----
-
-## Quick start
-
-> **Just need a simple loading box without capturing anything?**  
-> Skip to [`ShimmerPlaceholder`](#shimmerplaceholder----manual-loading-boxes) — drop in a fixed-size placeholder in two lines of code.
-
-### Option A — TypeScript `.ts` ⭐ (recommended, responsive)
-
-In the inspector, click **↓ Save .ts (Responsive)** after capturing. The inspector writes a ready-to-use `.ts` file like this to your `src/skeletons/` folder:
-
-```ts
-// card.skeletons.ts — auto-generated by Skeleton Inspector
-import type { ResponsiveSkeletons } from 'react-native-auto-shimmer';
-
-/**
- * Auto-generated by Skeleton Inspector — 2025-01-15
- * Component : card
- * Captured  : 390dp wide · 280dp tall · 6 pieces
- *
- * ✅ Pixel-perfect: x/w are percentages so widths scale on any screen.
- *    y/h are exact dp values measured from the live layout.
- *
- * 💡 Add more breakpoints (capture on other devices) for more precision,
- *    or refine values manually in this file.
- */
-const cardSkeletons: ResponsiveSkeletons = {
-  breakpoints: {
-    390: {
-      name: 'card',
-      viewportWidth: 390,
-      width: 390,
-      height: 280,
-      skeletons: [
-        // piece 0 — hero image / banner
-        { x: 0, y: 0, w: 100, h: 180, r: 0 },
-        // piece 1 — text line (full width)
-        { x: 4.1, y: 196, w: 91.8, h: 22, r: 6 },
-        // piece 2 — text line
-        { x: 4.1, y: 226, w: 61.5, h: 16, r: 6 },
-        // piece 3 — avatar circle
-        { x: 4.1, y: 252, w: 8.2, h: 32, r: '50%' },
-        // piece 4 — text line
-        { x: 14.4, y: 258, w: 35.9, h: 18, r: 6 },
-      ],
-    },
-  },
-};
-
-export default cardSkeletons;
++ // ✅ With react-native-auto-shimmer
++ <Skeleton loading={loading} name="card" style={styles.card}>
++   <ArticleCard />
++ </Skeleton>
 ```
 
-Then import and use it — same `initialSkeletons` prop as JSON:
+## Setup
 
-```tsx
-// ArticleScreen.tsx
-import { Skeleton } from 'react-native-auto-shimmer';
-import cardSkeletons from './skeletons/card.skeletons';
-
-export function ArticleScreen() {
-  const [loading, setLoading] = useState(true);
-
-  return (
-    <Skeleton loading={loading} initialSkeletons={cardSkeletons} style={styles.card}>
-      <ArticleCard />
-    </Skeleton>
-  );
-}
-```
-
-> **Why `.ts` over `.json`?** The `x`/`w` values are percentages of the container width, so the skeleton automatically scales to the right proportions on any device. `y`/`h` are exact dp from the live layout measurement. Capture once on any device — it looks right everywhere.
-
-### Option B — JSON `.json` (quickest, single device)
-
-Run the [Skeleton Inspector](#capturing-skeletons-with-skeleton-inspector), click **↓ Save skeletons.json**, then use the generated file:
-
-```tsx
-import { Skeleton } from 'react-native-auto-shimmer';
-import cardSkeletons from './skeletons/card.skeletons.json'; // generated by inspector
-
-export function ArticleScreen() {
-  const [loading, setLoading] = useState(true);
-
-  return (
-    <Skeleton loading={loading} initialSkeletons={cardSkeletons} style={styles.card}>
-      <ArticleCard />
-    </Skeleton>
-  );
-}
-```
-
-Before you've set up skeleton data, `<Skeleton>` shows its children without a skeleton overlay. The next section walks through the inspector capture workflow.
-
----
-
-## Capturing skeletons with Skeleton Inspector
-
-Skeleton Inspector is a **DevTools panel** powered by [Rozenite](https://rozenite.dev). It connects to your running app, triggers a live measurement, and lets you edit the result before writing it to disk.
-
-### Step 1 — Install dev dependencies
+### 1 — Install dev dependencies
 
 ```sh
-# inside your React Native project
 yarn add -D @rozenite/metro @react-native-auto-shimmer/rozenite-plugin
 ```
 
-### Step 2 — Configure Metro
+### 2 — Configure Metro
 
 ```js
 // metro.config.js
@@ -278,7 +159,6 @@ const { withRozenite } = require('@rozenite/metro');
 const { withSkeletonInspector } = require('@react-native-auto-shimmer/rozenite-plugin/metro');
 
 let config = getDefaultConfig(__dirname);
-
 config = withSkeletonInspector(config);
 
 if (process.env.WITH_ROZENITE === 'true') {
@@ -288,7 +168,7 @@ if (process.env.WITH_ROZENITE === 'true') {
 module.exports = config;
 ```
 
-### Step 3 — Register the plugin in your app entry
+### 3 — Register the plugin
 
 ```tsx
 // App.tsx or index.js
@@ -302,9 +182,7 @@ if (__DEV__) {
 }
 ```
 
-### Step 4 — Wrap your component
-
-Place `<SkeletonCapture>` **inside** `<Skeleton>`, directly around your real content:
+### 4 — Wrap your component
 
 ```tsx
 import { Skeleton, SkeletonCapture } from 'react-native-auto-shimmer';
@@ -314,7 +192,7 @@ export function ArticleScreen() {
 
   return (
     <Skeleton loading={loading} initialSkeletons={cardSkeletons} style={styles.card}>
-      {/* SkeletonCapture lives inside Skeleton so it sees the real laid-out content */}
+      {/* Place SkeletonCapture inside Skeleton so it measures visible content */}
       <SkeletonCapture name="card">
         <ArticleCard />
       </SkeletonCapture>
@@ -323,480 +201,190 @@ export function ArticleScreen() {
 }
 ```
 
-> **Why inside `<Skeleton>`?** `<Skeleton>` hides its children with `opacity: 0` while loading. Measuring from outside would give you hidden-element coordinates. Placing `<SkeletonCapture>` inside guarantees it only inspects the visible, real content.
-
-### Step 5 — Start Metro with Rozenite
+### 5 — Run the inspector
 
 ```sh
 WITH_ROZENITE=true yarn start
 ```
 
-### Step 6 — Open Skeleton Inspector
+Open your app → **React Native DevTools** → **Rozenite tab** → **Skeleton Inspector**
 
-1. Run the app on a simulator or device
-2. Open **React Native DevTools** (`j` in Metro, or via Expo Dev Tools)
-3. Click the **Rozenite** tab → **Skeleton Inspector**
+### 6 — Capture, review, save
 
-### Step 7 — Capture
+1. Navigate to your screen (make sure `loading` is `false` — real content must be visible)
+2. Click **⬡ Capture** — skeletons are measured from the live layout
+3. Delete unwanted pieces with the trash icon
+4. Click **↓ Save .ts (Responsive)** — file lands in `src/skeletons/`
+5. Copy the ready-to-paste snippet from the panel
 
-1. Navigate to the screen with your `<SkeletonCapture>` component
-2. Make sure `loading` is `false` (real content must be visible)
-3. Your component name appears under **Mounted Components**
-4. Click **⬡ Capture** — skeletons are measured from the live layout
+![Skeleton Inspector — captured skeletons](docs/captured-skeletons.png)
 
-![Skeleton Inspector — captured skeletons with numbered colour overlay and skeleton table](docs/captured-skeletons.png)
-
-### Step 8 — Review and delete
-
-The panel draws every skeleton with a numbered colour overlay and a data table below. Click the **trash icon** on any row to remove unwanted skeletons — the canvas redraws immediately.
-
-### Step 9 — Save
-
-Two buttons appear after capture:
-
-| Button | Output | Best for |
-|---|---|---|
-| **↓ Save .ts (Responsive)** ⭐ | `card.skeletons.ts` | Every device — x/w scale as percentages |
-| **↓ Save skeletons.json** | `card.skeletons.json` | Quick snapshot, single device |
-
-Files land in the Output Directory shown in the sidebar (default `src/skeletons`):
-
-```
-src/skeletons/card.skeletons.ts    ✓  ← responsive TypeScript (recommended)
-src/skeletons/card.skeletons.json  ✓  ← static JSON snapshot
-```
-
-After saving, the inspector shows a **ready-to-paste code snippet** with the exact import line and `<Skeleton>` usage — just copy and drop it into your screen file.
+> **Save .ts vs Save .json**
+> `.ts` stores `x`/`w` as percentages → scales to every screen size. **Use this.**
+> `.json` stores raw dp values → fastest for a quick snapshot on a single device.
 
 ---
 
-## Using saved skeletons
+## Using your skeletons
 
-### Import directly
-
-**From the auto-generated `.ts` file (recommended):**
+### Import directly  (recommended)
 
 ```tsx
-import cardSkeletons from './skeletons/card.skeletons';  // ← .ts, no extension needed
+import cardSkeletons from './skeletons/card.skeletons'; // .ts — responsive
 
 <Skeleton loading={loading} initialSkeletons={cardSkeletons} style={styles.card}>
   <ArticleCard />
 </Skeleton>
 ```
 
-**Or from a JSON snapshot:**
-
-```tsx
-import cardSkeletons from './skeletons/card.skeletons.json';
-
-<Skeleton loading={loading} initialSkeletons={cardSkeletons} style={styles.card}>
-  <ArticleCard />
-</Skeleton>
-```
-
-### Register once, use everywhere
-
-Register all your skeletons at app startup so every `<Skeleton>` can reference them by name:
+### Register once, use everywhere (optional)
 
 ```ts
 // App.tsx
 import { registerSkeletons } from 'react-native-auto-shimmer';
-import cardSkeletons      from './skeletons/card.skeletons';      // .ts (responsive)
-import profileSkeletons   from './skeletons/profile.skeletons';   // .ts (responsive)
-import feedPostSkeletons  from './skeletons/feedPost.skeletons.json'; // .json also works
+import cardSkeletons    from './skeletons/card.skeletons';
+import profileSkeletons from './skeletons/profile.skeletons';
 
-registerSkeletons({
-  card:     cardSkeletons,
-  profile:  profileSkeletons,
-  feedPost: feedPostSkeletons,
-});
+registerSkeletons({ card: cardSkeletons, profile: profileSkeletons });
 ```
 
-Then reference by name from any screen — no per-screen import needed:
-
 ```tsx
+// Any screen — no import needed
 <Skeleton name="card" loading={loading} style={styles.card}>
   <ArticleCard />
 </Skeleton>
 ```
 
-### What a `.skeletons.json` looks like
-
-```json
-{
-  "breakpoints": {
-    "408": {
-      "name": "card",
-      "viewportWidth": 408,
-      "height": 375,
-      "skeletons": [
-        { "x": 0,      "y": 0,   "w": 100,    "h": 230, "r": 8     },
-        { "x": 3.922,  "y": 246, "w": 92.157, "h": 22,  "r": 8     },
-        { "x": 3.922,  "y": 275, "w": 92.157, "h": 40,  "r": 8     },
-        { "x": 3.922,  "y": 327, "w": 7.843,  "h": 32,  "r": "50%" },
-        { "x": 14.22,  "y": 335, "w": 18.46,  "h": 17,  "r": 8     }
-      ]
-    }
-  }
-}
-```
-
-| Field | Unit | Notes |
-|-------|------|-------|
-| `x`, `w` | % of container width | Scales correctly on every device size |
-| `y`, `h` | absolute dp | Fixed vertical rhythm |
-| `r` | dp or `"50%"` | Border radius; `"50%"` produces a circle |
-
----
-
-## API Reference
-
-### `<Skeleton>`
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `loading` | `boolean` | **required** | Show skeleton (`true`) or real content (`false`) |
-| `children` | `ReactNode` | **required** | Your component |
-| `name` | `string` | — | Registry key — looks up skeletons registered with `registerSkeletons` |
-| `initialSkeletons` | `SkeletonResult \| ResponsiveSkeletons` | — | Direct skeleton data (JSON import). Takes priority over `name` |
-| `skeletons` | `SkeletonResult` | — | Dynamically computed skeletons (from `computeLayout`) |
-| `animate` | `'pulse' \| 'shimmer' \| 'solid' \| boolean` | `'pulse'` | Animation style |
-| `color` | `string` | `'rgba(0,0,0,0.08)'` | Skeleton colour (light mode) |
-| `darkColor` | `string` | `'rgba(255,255,255,0.06)'` | Skeleton colour (dark mode) |
-| `style` | `ViewStyle` | — | Wrapper View style — set `width`, `height`, `borderRadius` here |
-| `fallback` | `ReactNode` | — | Rendered when `loading=true` but no skeletons are registered yet |
-
----
-
-### `<SkeletonCapture>` *(dev only)*
-
-Exposes a component to the Skeleton Inspector panel. **No-op in production** — tree-shakes to a plain `<View>` with zero overhead.
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `name` | `string` | **required** | Identifier shown in the Skeleton Inspector panel |
-| `children` | `ReactNode` | **required** | The component to measure |
-| `style` | `ViewStyle` | — | Forwarded to the wrapper View |
-
----
-
-### `registerSkeletons(map)`
-
-Register pre-captured skeletons globally so `<Skeleton name="…">` can find them without a per-screen import.
-
-```ts
-import { registerSkeletons } from 'react-native-auto-shimmer';
-
-registerSkeletons({
-  card:    cardSkeletons,
-  profile: profileSkeletons,
-});
-```
-
----
-
-### `configureSkeleton(config)`
-
-Set global defaults once at app startup — any `<Skeleton>` prop overrides them locally.
+### Global config
 
 ```ts
 import { configureSkeleton } from 'react-native-auto-shimmer';
 
 configureSkeleton({
-  animate:   'shimmer',
+  animate:   'shimmer',           // 'pulse' | 'shimmer' | 'solid'
   color:     'rgba(0,0,0,0.06)',
   darkColor: 'rgba(255,255,255,0.08)',
 });
 ```
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `animate` | `'pulse' \| 'shimmer' \| 'solid' \| boolean` | Default animation for all skeletons |
-| `color` | `string` | Default skeleton colour (light mode) |
-| `darkColor` | `string` | Default skeleton colour (dark mode) |
-
 ---
 
-### `computeLayout(descriptor, width)`
+## API — `<Skeleton>`
 
-Pure-JS layout engine for when you want to hand-author skeletons or generate them server-side — no live device needed.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `loading` | `boolean` | **required** | Show skeleton (`true`) or real content (`false`) |
+| `children` | `ReactNode` | **required** | Your component |
+| `name` | `string` | — | Registry key set via `registerSkeletons` |
+| `initialSkeletons` | `SkeletonResult \| ResponsiveSkeletons` | — | Direct skeleton data — takes priority over `name` |
+| `animate` | `'pulse' \| 'shimmer' \| 'solid' \| boolean` | `'pulse'` | Animation style |
+| `color` | `string` | `'rgba(0,0,0,0.08)'` | Skeleton colour (light mode) |
+| `darkColor` | `string` | `'rgba(255,255,255,0.06)'` | Skeleton colour (dark mode) |
+| `style` | `ViewStyle` | — | Wrapper style — set `width`, `height`, `borderRadius` here |
+| `fallback` | `ReactNode` | — | Shown when `loading=true` but no skeletons exist yet |
 
-```ts
-import { computeLayout } from 'react-native-auto-shimmer';
-import type { SkeletonDescriptor } from 'react-native-auto-shimmer';
+## API — `<SkeletonCapture>` *(dev only)*
 
-const card: SkeletonDescriptor = {
-  display: 'flex',
-  flexDirection: 'column',
-  padding: 16,
-  gap: 12,
-  children: [
-    { aspectRatio: 16 / 9 },
-    { text: 'Article title', font: '700 18px Inter', lineHeight: 24 },
-    { text: 'Body copy',     font: '14px Inter',    lineHeight: 20 },
-    {
-      display: 'flex', flexDirection: 'row', gap: 10, alignItems: 'center',
-      children: [
-        { width: 32, height: 32, borderRadius: 16 },           // avatar circle
-        { text: 'Author name', font: '600 14px Inter', lineHeight: 18 },
-      ],
-    },
-  ],
-};
+No-op in production — tree-shakes to a plain `<View>` with zero overhead.
 
-const result = computeLayout(card, 390); // container width in dp
-// result.skeletons → array of SkeletonSkeleton objects ready for <Skeleton>
-```
+| Prop | Type | Description |
+|------|------|-------------|
+| `name` | `string` | Identifier shown in Skeleton Inspector |
+| `children` | `ReactNode` | The component to measure |
+| `style` | `ViewStyle` | Forwarded to the wrapper View |
 
 ---
 
 ## Animation styles
 
-| Value | Description |
-|-------|-------------|
-| `'pulse'` | Opacity fades 100% → 45% and back. Runs on the **native UI thread** via `Animated.loop`. |
-| `'shimmer'` | A bright highlight sweeps left-to-right across all skeletons in sync. |
-| `'solid'` | No animation — static skeletons. Useful for reduced-motion preferences. |
-| `true` | Alias for `'pulse'` |
-| `false` | Alias for `'solid'` |
-
-```tsx
-<Skeleton loading={loading} animate="shimmer" initialSkeletons={skeletons}>
-  <MyCard />
-</Skeleton>
-```
+| Value | Behaviour |
+|-------|-----------|
+| `'pulse'` | Opacity 100% → 45% loop — runs on the **native UI thread** |
+| `'shimmer'` | Bright highlight sweeps left-to-right across all pieces |
+| `'solid'` | Static — no animation (good for Reduce Motion) |
 
 ---
 
-## Responsive skeletons
+## Responsive skeletons & dark mode
 
-When the same component renders at multiple widths (full-width on phone, half-width in a grid on tablet), capture at each size. The JSON stores one entry per breakpoint and `<Skeleton>` automatically picks the nearest match.
+**Multi-breakpoint:** Capture at each device width. The file stores one entry per breakpoint; `<Skeleton>` picks the nearest match automatically.
 
-**To produce a multi-breakpoint file:**
-1. Render at the first width → Capture → Save
-2. Render at a different width (rotate device, change layout) → Capture → Save (same name)
-
-The panel merges both captures into a single JSON file.
-
-**Or generate programmatically:**
-
-```ts
-import { computeLayout, registerSkeletons } from 'react-native-auto-shimmer';
-import type { ResponsiveSkeletons } from 'react-native-auto-shimmer';
-
-const descriptor = { /* … */ };
-
-const responsiveSkeletons: ResponsiveSkeletons = {
-  breakpoints: {
-    0:   computeLayout(descriptor, 390),  // phones
-    600: computeLayout(descriptor, 600),  // tablets
-  },
-};
-
-registerSkeletons({ card: responsiveSkeletons });
-```
+**Dark mode:** `<Skeleton>` reads `useColorScheme()` internally — pass `color` and `darkColor` or set them once with `configureSkeleton`.
 
 ---
 
-## Dark mode
+# Manual Options
 
-`<Skeleton>` calls `useColorScheme()` internally — no extra setup required:
-
-```tsx
-<Skeleton
-  loading={loading}
-  initialSkeletons={cardSkeletons}
-  color="rgba(0,0,0,0.07)"
-  darkColor="rgba(255,255,255,0.09)"
->
-  <MyCard />
-</Skeleton>
-```
-
-Or set it once with `configureSkeleton` and never think about it again.
-
----
-
-## FAQ
-
-<details>
-<summary><strong>Do I need to keep <code>&lt;SkeletonCapture&gt;</code> in production?</strong></summary>
-
-No — but you can safely leave it. In production (`__DEV__ === false`) it renders as a transparent zero-overhead `<View>` with no bridge calls.
-</details>
-
-<details>
-<summary><strong>The panel shows "No components found".</strong></summary>
-
-Navigate to the screen that mounts your `<SkeletonCapture>` component. Components register when they mount and deregister when they unmount — the panel always reflects what's currently on screen.
-</details>
-
-<details>
-<summary><strong>&lt;Skeleton&gt; shows a blank space instead of skeletons.</strong></summary>
-
-You haven't passed skeletons yet. Use the `fallback` prop as a placeholder while you run the capture workflow for the first time:
-
-```tsx
-<Skeleton loading={loading} fallback={<MyPlaceholder />}>
-  <MyCard />
-</Skeleton>
-```
-</details>
-
-<details>
-<summary><strong>My component renders at different widths. Which should I capture?</strong></summary>
-
-Capture at every meaningful width. The saved JSON stores one entry per breakpoint and `<Skeleton>` automatically selects the closest one at render time.
-</details>
-
-<details>
-<summary><strong>Can I edit the skeleton JSON by hand?</strong></summary>
-
-Yes. The format is intentionally simple: `x`/`w` are percentages, `y`/`h` are dp, `r` is border-radius in dp or `"50%"` for circles. You can also delete skeletons interactively from Skeleton Inspector before saving.
-</details>
-
-<details>
-<summary><strong>Does it work with Expo?</strong></summary>
-
-Yes. No native modules are required. The Rozenite plugin uses Metro's `enhanceMiddleware` API, which Expo's Metro supports out of the box.
-</details>
-
-<details>
-<summary><strong>Does it work with the New Architecture (Fabric)?</strong></summary>
-
-Yes. `SkeletonCapture` detects the renderer at runtime and uses the correct measurement path for both Fabric (direct `.measure()` on public instances) and the legacy renderer (`UIManager.measure`).
-</details>
-
-<details>
-<summary><strong>Does it work with React Navigation / Expo Router?</strong></summary>
-
-Yes. `<SkeletonCapture>` registers itself when it mounts and cleans up when it unmounts, so it plays nicely with any navigation library's screen lifecycle.
-</details>
+> Quick placeholders without the capture workflow.
 
 ---
 
 ## ShimmerOverlay
 
-A **general-purpose shimmer highlight effect** that works on *any* React Native content — buttons, images, cards, headers, text — not just skeleton placeholders.
-
-Unlike `<Skeleton>` (which manages loading state + placeholder layout), `<ShimmerOverlay>` simply wraps any element and sweeps a configurable highlight band over it.
-
-> **Need a fixed-size placeholder box?** See [`<ShimmerPlaceholder>`](#shimmerplaceholder) below — a drop-in replacement for `react-native-shimmer-placeholder` with no LinearGradient dependency.
-
-<div align="center">
-
-| Use `<Skeleton>` when… | Use `<ShimmerOverlay>` when… |
-|---|---|
-| Showing loading placeholders | Adding a shine/highlight to real content |
-| Need auto-captured layout | Wrapping any arbitrary element |
-| Managing `loading` state | Just want the visual effect |
-
-</div>
-
-### ShimmerOverlay Basic usage
+Adds a shimmer sweep to **any** existing element — real content, buttons, images, cards. Not a loading placeholder; a visual highlight effect.
 
 ```tsx
 import { ShimmerOverlay } from 'react-native-auto-shimmer';
 
-// Shine over any element
+// Basic
 <ShimmerOverlay>
   <View style={styles.card} />
 </ShimmerOverlay>
-```
 
-### Examples
-
-```tsx
-import { ShimmerOverlay, type ShimmerOverlayRef } from 'react-native-auto-shimmer';
-
-// ── Premium button highlight ──────────────────────────────────────────────────
-<ShimmerOverlay
-  color="rgba(255, 200, 0, 0.7)"
-  mode="expand"
-  angle={20}
-  duration={1800}
->
+// Premium button highlight
+<ShimmerOverlay color="rgba(255,200,0,0.7)" mode="expand" angle={20} duration={1800}>
   <PremiumButton />
 </ShimmerOverlay>
 
-// ── Staggered list (each row starts 200ms later) ──────────────────────────────
+// Staggered list
 {items.map((item, i) => (
   <ShimmerOverlay key={item.id} initialDelay={i * 200}>
     <ListRow item={item} />
   </ShimmerOverlay>
 ))}
 
-// ── Right-to-left sweep ───────────────────────────────────────────────────────
-<ShimmerOverlay direction="right-to-left" bandWidth={100}>
-  <HeroImage />
-</ShimmerOverlay>
-
-// ── Programmatic control via ref ──────────────────────────────────────────────
+// Programmatic control
 const shimmerRef = useRef<ShimmerOverlayRef>(null);
-
 <ShimmerOverlay ref={shimmerRef} active={false}>
   <View style={styles.banner} />
 </ShimmerOverlay>
-
-<Button title="Start" onPress={() => shimmerRef.current?.start()} />
-<Button title="Stop"  onPress={() => shimmerRef.current?.stop()} />
+<Button title="Shine" onPress={() => shimmerRef.current?.start()} />
 ```
 
 ### Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `children` | `ReactNode` | — | Content to apply the shimmer to |
 | `active` | `boolean` | `true` | Whether the animation runs |
-| `color` | `string` | `'rgba(255,255,255,0.8)'` | Color of the shimmer band |
-| `duration` | `number` | `1500` | One cycle duration in ms |
-| `delay` | `number` | `400` | Pause between cycles in ms |
-| `initialDelay` | `number` | `0` | Delay before first cycle (useful for staggering) |
-| `angle` | `number` | `20` | Band angle in degrees (0 = vertical) |
-| `bandWidth` | `number` | `60` | Width of the shimmer band in px |
-| `opacity` | `number` | `1` | Overall opacity of the effect (0–1) |
-| `mode` | `'normal' \| 'expand' \| 'shrink'` | `'normal'` | Band size animation style |
-| `position` | `'top' \| 'center' \| 'bottom'` | `'center'` | Anchor point for expand/shrink |
+| `color` | `string` | `'rgba(255,255,255,0.8)'` | Shimmer band colour |
+| `duration` | `number` | `1500` | One cycle in ms |
+| `delay` | `number` | `400` | Pause between cycles |
+| `initialDelay` | `number` | `0` | Delay before first cycle |
+| `angle` | `number` | `20` | Band angle in degrees |
+| `bandWidth` | `number` | `60` | Band width in px |
+| `mode` | `'normal' \| 'expand' \| 'shrink'` | `'normal'` | Band size style |
 | `direction` | `'left-to-right' \| 'right-to-left'` | `'left-to-right'` | Sweep direction |
-| `iterations` | `number` | `-1` | Number of cycles (-1 = infinite) |
-| `easing` | `(t: number) => number` | bezier(0.4,0,0.2,1) | Custom easing function |
-| `respectReduceMotion` | `boolean` | `true` | Pauses when system Reduce Motion is on |
-| `pauseOnBackground` | `boolean` | `true` | Pauses when app goes to background |
-| `onAnimationStart` | `() => void` | — | Called once when sequence starts |
+| `iterations` | `number` | `-1` | Cycles (-1 = infinite) |
+| `respectReduceMotion` | `boolean` | `true` | Pauses on system Reduce Motion |
+| `pauseOnBackground` | `boolean` | `true` | Pauses when app backgrounds |
 | `onAnimationComplete` | `() => void` | — | Called when all iterations finish |
-| `onIterationComplete` | `(n: number) => void` | — | Called after each iteration |
-| `style` | `StyleProp<ViewStyle>` | — | Container style |
-| `testID` | `string` | — | Test ID for e2e frameworks |
 
-### Ref methods (`ShimmerOverlayRef`)
+### Ref methods
 
 ```tsx
-const ref = useRef<ShimmerOverlayRef>(null);
-
-ref.current?.start();       // Start animation
-ref.current?.stop();        // Stop immediately
+ref.current?.start();       // Start
+ref.current?.stop();        // Stop
 ref.current?.restart();     // Restart from beginning
 ref.current?.isAnimating(); // → boolean
 ```
 
 ---
 
-## ShimmerPlaceholder — manual loading boxes
+## ShimmerPlaceholder
 
-Use `ShimmerPlaceholder` when you want to **handcraft individual loading boxes** without capturing a live component — perfect for simple screens, one-off placeholders, or when you prefer to build your skeleton layout manually in code.
+A fixed-size shimmer box you size in code. Drop-in for [`react-native-shimmer-placeholder`](https://github.com/tomzaku/react-native-shimmer-placeholder) with **zero dependencies** — no LinearGradient needed.
 
-> **Auto-captured skeletons vs manual placeholders**
->
-> | | `<Skeleton>` + captured `.ts` | `ShimmerPlaceholder` |
-> |---|---|---|
-> | Layout source | Measured from live UI | You specify `width` / `height` |
-> | Responsive | ✅ % widths auto-scale | ❌ Fixed px values |
-> | Setup | DevTools capture | Just import and use |
-> | Best for | Any real screen | Simple / one-off loading UIs |
-
-`ShimmerPlaceholder` has the **same API as [`react-native-shimmer-placeholder`](https://github.com/tomzaku/react-native-shimmer-placeholder)** but with **zero dependencies** — no `LinearGradient`, no `react-native-linear-gradient`, no `expo-linear-gradient`. The gradient is simulated using layered `View` slices with a bell-curve opacity profile.
-
-### Migrating from `react-native-shimmer-placeholder`
+### Migrate in 2 lines
 
 ```diff
 - import LinearGradient from 'react-native-linear-gradient';
@@ -804,21 +392,15 @@ Use `ShimmerPlaceholder` when you want to **handcraft individual loading boxes**
 - const ShimmerPlaceHolder = createShimmerPlaceholder(LinearGradient);
 
 + import { createShimmerPlaceholder } from 'react-native-auto-shimmer';
-+ const ShimmerPlaceHolder = createShimmerPlaceholder(); // no LinearGradient needed
++ const ShimmerPlaceHolder = createShimmerPlaceholder();
 ```
 
-Or import directly:
-
-```tsx
-import { ShimmerPlaceholder } from 'react-native-auto-shimmer';
-```
-
-### Basic usage
+### Usage
 
 ```tsx
 import { ShimmerPlaceholder } from 'react-native-auto-shimmer';
 
-// Text line — shows shimmer until `loaded` is true
+// Text line
 <ShimmerPlaceholder width={220} height={14} borderRadius={6} visible={loaded}>
   <Text>{title}</Text>
 </ShimmerPlaceholder>
@@ -827,45 +409,39 @@ import { ShimmerPlaceholder } from 'react-native-auto-shimmer';
 <ShimmerPlaceholder width={48} height={48} borderRadius={24} visible={loaded}>
   <Image source={{ uri: avatarUrl }} style={styles.avatar} />
 </ShimmerPlaceholder>
+
+// Dark mode
+<ShimmerPlaceholder
+  width={240} height={16} borderRadius={8}
+  shimmerColors={['#2a2a3e', '#3d3d5c', '#2a2a3e']}
+  visible={loaded}
+>
+  <Text>{label}</Text>
+</ShimmerPlaceholder>
 ```
 
-### Building a full placeholder card
+### Full placeholder card
 
 ```tsx
 function ArticleCardPlaceholder({ loaded }: { loaded: boolean }) {
   return (
     <View style={styles.card}>
-      {/* Hero image */}
       <ShimmerPlaceholder width={340} height={180} visible={loaded}>
         <Image source={{ uri: imageUrl }} style={styles.hero} />
       </ShimmerPlaceholder>
-
       <View style={styles.body}>
-        {/* Title */}
-        <ShimmerPlaceholder width={280} height={18} borderRadius={6} visible={loaded}
-          style={{ marginBottom: 8 }}>
+        <ShimmerPlaceholder width={280} height={18} borderRadius={6} visible={loaded} style={{ marginBottom: 8 }}>
           <Text style={styles.title}>{title}</Text>
         </ShimmerPlaceholder>
-
-        {/* Body line 1 */}
-        <ShimmerPlaceholder width={300} height={13} borderRadius={6} visible={loaded}
-          style={{ marginBottom: 6 }}>
-          <Text style={styles.body}>{excerpt}</Text>
+        <ShimmerPlaceholder width={300} height={13} borderRadius={6} visible={loaded} style={{ marginBottom: 6 }}>
+          <Text>{excerpt}</Text>
         </ShimmerPlaceholder>
-
-        {/* Body line 2 — shorter */}
-        <ShimmerPlaceholder width={200} height={13} borderRadius={6} visible={loaded}
-          style={{ marginBottom: 12 }}>
-          <Text style={styles.body}>{excerpt2}</Text>
-        </ShimmerPlaceholder>
-
-        {/* Author row */}
         <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
           <ShimmerPlaceholder width={32} height={32} borderRadius={16} visible={loaded}>
             <Image source={{ uri: avatarUrl }} style={styles.avatar} />
           </ShimmerPlaceholder>
           <ShimmerPlaceholder width={120} height={13} borderRadius={6} visible={loaded}>
-            <Text style={styles.author}>{authorName}</Text>
+            <Text>{authorName}</Text>
           </ShimmerPlaceholder>
         </View>
       </View>
@@ -874,61 +450,101 @@ function ArticleCardPlaceholder({ loaded }: { loaded: boolean }) {
 }
 ```
 
-### Dark mode placeholder
-
-```tsx
-<ShimmerPlaceholder
-  width={240} height={16} borderRadius={8}
-  shimmerColors={['#2a2a3e', '#3d3d5c', '#2a2a3e']}
-  visible={loaded}
->
-  <Text style={styles.darkText}>{label}</Text>
-</ShimmerPlaceholder>
-```
-
 ### Props
 
 | Prop | Type | Default | Description |
 |---|---|---|---|
-| `width` | `number` | `200` | Width of the placeholder in px |
-| `height` | `number` | `15` | Height of the placeholder in px |
+| `width` | `number` | `200` | Width in px |
+| `height` | `number` | `15` | Height in px |
 | `visible` | `boolean` | `false` | `true` = show children, `false` = show shimmer |
-| `shimmerColors` | `[string, string, string]` | `['#ebebeb','#d0d0d0','#ebebeb']` | Edge / centre / edge gradient colours |
-| `isReversed` | `boolean` | `false` | Sweep right-to-left instead |
-| `stopAutoRun` | `boolean` | `false` | Prevent auto-start on mount |
-| `duration` | `number` | `1000` | One sweep duration in ms |
+| `shimmerColors` | `[string, string, string]` | `['#ebebeb','#d0d0d0','#ebebeb']` | Gradient colours |
+| `isReversed` | `boolean` | `false` | Sweep right-to-left |
+| `duration` | `number` | `1000` | One sweep in ms |
 | `delay` | `number` | `0` | Delay before each sweep |
-| `borderRadius` | `number` | `0` | Border radius of the placeholder box |
+| `borderRadius` | `number` | `0` | Border radius |
 | `style` | `StyleProp<ViewStyle>` | — | Outer container style |
-| `contentStyle` | `StyleProp<ViewStyle>` | — | Children wrapper style (when `visible`) |
-| `shimmerStyle` | `StyleProp<ViewStyle>` | — | Shimmer box style (when not `visible`) |
+| `contentStyle` | `StyleProp<ViewStyle>` | — | Children wrapper style |
+| `shimmerStyle` | `StyleProp<ViewStyle>` | — | Shimmer box style |
 
-### Ref methods (`ShimmerPlaceholderRef`)
+---
+
+## FAQ
+
+<details>
+<summary><strong>Do I need to keep &lt;SkeletonCapture&gt; in production?</strong></summary>
+
+No — but you can safely leave it. In production (`__DEV__ === false`) it renders as a transparent `<View>` with no bridge calls whatsoever.
+</details>
+
+<details>
+<summary><strong>The panel shows "No components found".</strong></summary>
+
+Navigate to the screen that mounts your `<SkeletonCapture>`. Components register on mount and deregister on unmount — the panel reflects what's currently on screen.
+</details>
+
+<details>
+<summary><strong>&lt;Skeleton&gt; shows blank space instead of a skeleton.</strong></summary>
+
+No skeleton data has been passed yet. Use `fallback` while you complete the capture:
 
 ```tsx
-const ref = useRef<ShimmerPlaceholderRef>(null);
-
-ref.current?.start(); // manually start sweeping
-ref.current?.stop();  // manually stop sweeping
+<Skeleton loading={loading} fallback={<View style={styles.placeholder} />}>
+  <MyCard />
+</Skeleton>
 ```
+</details>
+
+<details>
+<summary><strong>My component renders at different widths. Which do I capture?</strong></summary>
+
+Capture at every meaningful width. Each capture adds a breakpoint to the same file and `<Skeleton>` picks the closest one at runtime.
+</details>
+
+<details>
+<summary><strong>Can I edit the skeleton data by hand?</strong></summary>
+
+Yes. `x`/`w` are % of container width, `y`/`h` are dp, `r` is border-radius in dp or `"50%"` for circles. Or just delete unwanted pieces in the inspector before saving.
+</details>
+
+<details>
+<summary><strong>Does it work with Expo?</strong></summary>
+
+Yes. No native modules. The Rozenite plugin uses Metro's `enhanceMiddleware` API, which Expo supports out of the box.
+</details>
+
+<details>
+<summary><strong>Does it work with the New Architecture (Fabric)?</strong></summary>
+
+Yes. `SkeletonCapture` detects the renderer at runtime and uses the correct measurement path for both Fabric and the legacy renderer.
+</details>
+
+<details>
+<summary><strong>Does it work with React Navigation / Expo Router?</strong></summary>
+
+Yes. `<SkeletonCapture>` registers on mount and cleans up on unmount — no conflicts with any navigation library.
+</details>
 
 ---
 
 ## Contributing
 
-We welcome contributions of all sizes — bug fixes, new features, docs improvements.
+Bug fixes, features, and docs improvements are all welcome.
 
 - [Development workflow](CONTRIBUTING.md#development-workflow)
 - [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
 
 ---
 
-## Support
+## Support the project
 
-### Would you like to support me?
+If this library saves you time, a star on GitHub goes a long way — it helps other developers discover it.
 
 <div align="center">
+
+**[⭐ Star on GitHub](https://github.com/numandev1/react-native-auto-shimmer)**
+
 <a href="https://www.buymeacoffee.com/numan.dev" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
+
 </div>
 
 ---

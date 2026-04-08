@@ -79,7 +79,7 @@ function SkeletonCaptureNoop({ children, style }: SkeletonCaptureProps) {
 // ── Dev-mode capture ──────────────────────────────────────────────────────────
 
 class SkeletonCaptureImpl extends React.PureComponent<SkeletonCaptureProps> {
-  private containerRef = React.createRef<View>();
+  private containerRef = React.createRef<React.ElementRef<typeof View>>();
 
   componentDidMount() {
     this.registerWithPlugin();

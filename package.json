@@ -1,6 +1,6 @@
 {
   "name": "react-native-auto-shimmer",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Auto-generated skeleton loading screens for React Native",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -37,7 +37,8 @@
     "prepare": "bob build",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
-    "inspect": "WITH_ROZENITE=true yarn example start"
+    "inspect": "WITH_ROZENITE=true yarn example start",
+    "release": "release-it"
   },
   "keywords": [
     "react-native",
@@ -73,6 +74,7 @@
     "react": "19.1.0",
     "react-native": "0.81.5",
     "react-native-builder-bob": "^0.41.0",
+    "release-it": "^19.2.4",
     "turbo": "^2.8.21",
     "typescript": "^6.0.2"
   },
