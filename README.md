@@ -533,8 +533,6 @@ Bug fixes, features, and docs improvements are all welcome.
 - [Development workflow](CONTRIBUTING.md#development-workflow)
 - [Sending a pull request](CONTRIBUTING.md#sending-a-pull-request)
 
----
-
 ## Support the project
 
 If this library saves you time, a star on GitHub goes a long way — it helps other developers discover it.
@@ -548,6 +546,9 @@ If this library saves you time, a star on GitHub goes a long way — it helps ot
 </div>
 
 ---
+
+inspired by [boneyard](https://github.com/0xGF/boneyard)
+
 
 ## License
 
