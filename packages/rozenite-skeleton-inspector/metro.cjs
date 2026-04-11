@@ -42,27 +42,36 @@ function skeletonSaveMiddleware(middleware) {
       req.on('end', function () {
         try {
           const payload = JSON.parse(body);
-          const { name, outDir, viewportWidth, height, skeletons, asDescriptor, descriptorSource } = payload;
+          const { name, outDir, allBreakpoints, asDescriptor, descriptorSource } = payload;
 
-          if (!name || !Array.isArray(skeletons) || !viewportWidth || !outDir) {
+          if (!name || !outDir || !allBreakpoints || typeof allBreakpoints !== 'object') {
             res.writeHead(400);
-            res.end(JSON.stringify({ error: 'Missing required fields: name, outDir, viewportWidth, skeletons' }));
+            res.end(JSON.stringify({ error: 'Missing required fields: name, outDir, allBreakpoints' }));
             return;
           }
 
           const absOut = path.isAbsolute(outDir) ? outDir : path.resolve(process.cwd(), outDir);
           fs.mkdirSync(absOut, { recursive: true });
 
+          // Count total pieces across all breakpoints for logging
+          const bpWidths = Object.keys(allBreakpoints).map(Number).sort((a, b) => a - b);
+          const firstBp = allBreakpoints[bpWidths[0]];
+          const pieceCount = firstBp ? firstBp.skeletons.length : 0;
+
           if (asDescriptor && descriptorSource) {
-            // ── Save as .ts (ResponsiveSkeletons — recommended) ───────────
+            // ── Save as .ts (ResponsiveSkeletons — all breakpoints in one file) ──
             const tsFile = path.join(absOut, name + '.skeletons.ts');
             fs.writeFileSync(tsFile, descriptorSource, 'utf8');
             const relFile = path.relative(process.cwd(), tsFile);
-            console.log('\n  [Skeleton Inspector] ✓  ' + name + '  →  ' + skeletons.length + ' skeletons  →  ' + relFile + '\n');
+            console.log(
+              '\n  [Skeleton Inspector] ✓  ' + name +
+              '  →  ' + bpWidths.length + ' breakpoints (' + bpWidths.join(', ') + 'dp)' +
+              '  →  ' + relFile + '\n'
+            );
             res.writeHead(200);
-            res.end(JSON.stringify({ ok: true, file: relFile, skeletons: skeletons.length }));
+            res.end(JSON.stringify({ ok: true, file: relFile, skeletons: pieceCount, breakpointCount: bpWidths.length }));
           } else {
-            // ── Save as .json (raw breakpoints snapshot) ──────────────────
+            // ── Save as .json — merge all new breakpoints into the existing file ──
             const jsonFile = path.join(absOut, name + '.skeletons.json');
 
             let existing = { breakpoints: {} };
@@ -71,20 +80,28 @@ function skeletonSaveMiddleware(middleware) {
               catch (_) { existing = { breakpoints: {} }; }
             }
 
-            const key = String(Math.round(viewportWidth));
-            existing.breakpoints[key] = {
-              name: name,
-              viewportWidth: Math.round(viewportWidth),
-              width: Math.round(viewportWidth),
-              height: Math.round(height || 0),
-              skeletons: skeletons,
-            };
+            // Merge every breakpoint from the panel
+            for (const widthStr of Object.keys(allBreakpoints)) {
+              const bp = allBreakpoints[widthStr];
+              const key = String(Math.round(Number(widthStr)));
+              existing.breakpoints[key] = {
+                name: name,
+                viewportWidth: Math.round(bp.viewportWidth),
+                width: Math.round(bp.viewportWidth),
+                height: Math.round(bp.height || 0),
+                skeletons: bp.skeletons,
+              };
+            }
 
             fs.writeFileSync(jsonFile, JSON.stringify(existing, null, 2) + '\n');
             const relFile = path.relative(process.cwd(), jsonFile);
-            console.log('\n  [Skeleton Inspector] ✓  ' + name + '  →  ' + skeletons.length + ' skeletons  →  ' + relFile + '\n');
+            console.log(
+              '\n  [Skeleton Inspector] ✓  ' + name +
+              '  →  ' + bpWidths.length + ' breakpoints (' + bpWidths.join(', ') + 'dp)' +
+              '  →  ' + relFile + '\n'
+            );
             res.writeHead(200);
-            res.end(JSON.stringify({ ok: true, file: relFile, skeletons: skeletons.length }));
+            res.end(JSON.stringify({ ok: true, file: relFile, skeletons: pieceCount, breakpointCount: bpWidths.length }));
           }
         } catch (e) {
           console.error('[skeleton-save] Error:', e.message);

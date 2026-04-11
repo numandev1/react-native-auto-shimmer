@@ -61,6 +61,25 @@ function getRegistry(): Map<string, RegistryEntry> {
   return g[REGISTRY_KEY];
 }
 
+// Expose lookupSkeletons on globalThis so the Rozenite plugin (react-native.ts)
+// can access the app's saved skeleton registry for drift detection without
+// creating a circular import.
+function exposeLookup() {
+  const g = globalThis as any;
+  if (!g.__rnAutoShimmerLookup__) {
+    try {
+      // Lazily resolve to avoid circular deps at module evaluation time
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const { lookupSkeletons } = require('./registry');
+      g.__rnAutoShimmerLookup__ = lookupSkeletons;
+    } catch {
+      // Registry not available — drift detection will be skipped
+    }
+  }
+}
+
+if (__DEV__) exposeLookup();
+
 // ── Props ────────────────────────────────────────────────────────────────────
 
 export interface SkeletonCaptureProps {
@@ -170,15 +189,15 @@ function getFiber(instance: any): any {
 type Rect = { px: number; py: number; w: number; h: number };
 
 /**
- * Measure a node using whatever API is available:
- * - Fabric (RN 0.76+): public instances have a .measure() method — use it directly.
- * - Legacy renderer: fall back to UIManager.measure(nativeTag).
+ * Measure a node and return its rect in dp.
+ * In Fabric (RN 0.76+) measure() returns dp on both iOS and Android.
  */
 function measureAny(target: any): Promise<Rect | null> {
   return new Promise((resolve) => {
     if (!target) { resolve(null); return; }
     try {
-      const cb: MeasureOnSuccessCallback = (_x, _y, w, h, px, py) => resolve({ px, py, w, h });
+      const cb: MeasureOnSuccessCallback = (_x, _y, w, h, px, py) =>
+        resolve({ px, py, w, h });
 
       if (typeof target.measure === 'function') {
         target.measure(cb);

@@ -98,6 +98,9 @@ interface SkeletonPieceViewProps {
   pulseOpacity: Animated.Value;
   shimmerProgress: Animated.Value;
   containerWidth: number;
+  // Scale factor for y/h when containerWidth differs from the captured viewport width.
+  // Keeps pieces proportionally positioned on screens that don't match the capture device.
+  yScale: number;
 }
 
 const SkeletonPieceView = React.memo(function SkeletonPieceView({
@@ -108,6 +111,7 @@ const SkeletonPieceView = React.memo(function SkeletonPieceView({
   pulseOpacity,
   shimmerProgress,
   containerWidth,
+  yScale,
 }: SkeletonPieceViewProps) {
   // Container skeletons (c=true) are rendered slightly darker so they visually sit
   // behind leaf skeletons — adjustColor increases alpha for rgba, lerps toward darker for hex.
@@ -119,8 +123,9 @@ const SkeletonPieceView = React.memo(function SkeletonPieceView({
   // RN supports percentage strings for left/width in absolute layouts
   const left = `${piece.x}%` as `${number}%`;
   const width = `${piece.w}%` as `${number}%`;
-  const top = piece.y;
-  const height = piece.h;
+  // Scale y/h proportionally when the container is narrower/wider than the capture device
+  const top = Math.round(piece.y * yScale);
+  const height = Math.round(piece.h * yScale);
 
   // '50%' border-radius → half of height in dp (RN doesn't support % border-radius)
   const borderRadius = piece.r === '50%' ? height / 2 : (piece.r as number);
@@ -224,6 +229,13 @@ export function Skeleton({
   const showSkeleton = loading && activeSkeletons !== null;
   const showFallback = loading && activeSkeletons === null;
 
+  // When the container width doesn't exactly match the captured viewport width,
+  // scale y/h proportionally so pieces stay in the right vertical positions.
+  // On a perfect match (or with a descriptor) yScale is 1.0.
+  const yScale = activeSkeletons && activeSkeletons.viewportWidth > 0
+    ? containerWidth / activeSkeletons.viewportWidth
+    : 1;
+
   // Keep last valid children so we never flash empty content when toggling
   if (!loading && children !== null && children !== undefined) {
     prevChildRef.current = children;
@@ -248,6 +260,7 @@ export function Skeleton({
               pulseOpacity={pulseOpacity}
               shimmerProgress={shimmerProgress}
               containerWidth={containerWidth}
+              yScale={yScale}
             />
           ))}
         </View>
